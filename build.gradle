@@ -37,7 +37,6 @@ android {
 
     sourceSets {
         main {
-            // Android demo app sources.
             java {
                 srcDir 'src'
             }

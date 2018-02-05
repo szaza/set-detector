@@ -29,8 +29,10 @@ import org.tensorflow.yolo.model.BoxPosition;
 import org.tensorflow.yolo.model.Recognition;
 import org.tensorflow.yolo.util.ClassAttrProvider;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple View providing a render callback to other classes.
@@ -68,7 +70,7 @@ public class OverlayView extends View {
         if (results != null) {
             for (int i = 0; i < results.size(); i++) {
                 RectF box = reCalcSize(results.get(i).getLocation());
-                String title = results.get(i).getTitle() + ":"
+                String title = convertTitle(results.get(i).getTitle()) + ":"
                         + String.format("%.2f", results.get(i).getConfidence());
                 paint.setColor(colors.get(results.get(i).getId()));
                 canvas.drawRect(box, paint);
@@ -87,6 +89,27 @@ public class OverlayView extends View {
      */
     public interface DrawCallback {
         void drawCallback(final Canvas canvas);
+    }
+
+    private String convertTitle(String title) {
+        String[] colors = new String[]{"red","green","purple"};
+        for (String color: colors) {
+            title = title.replace(color+"-","");
+        }
+
+        Map<String, String> replacements = new HashMap();
+        replacements.put("one","1");
+        replacements.put("two","2");
+        replacements.put("three","3");
+        replacements.put("blank","bla");
+        replacements.put("striped","str");
+        replacements.put("filled","fil");
+        
+        for (Map.Entry<String, String> entry : replacements.entrySet()) {
+            title = title.replace(entry.getKey(), entry.getValue());
+        }
+
+        return title;
     }
 
     private RectF reCalcSize(BoxPosition rect) {

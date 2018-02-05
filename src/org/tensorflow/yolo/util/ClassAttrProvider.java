@@ -16,6 +16,7 @@ package org.tensorflow.yolo.util;
 
 import android.content.res.AssetManager;
 import android.graphics.Color;
+import android.util.Log;
 
 import org.tensorflow.yolo.Config;
 
@@ -23,6 +24,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Vector;
+
+import static org.tensorflow.yolo.Config.LOGGING_TAG;
 
 /**
  * It is used to read names of the classes from the specified resource.
@@ -61,21 +64,19 @@ public final class ClassAttrProvider {
     }
 
     private int convertClassNameToColor(String className) {
-        byte[] rgb = new byte[3];
-        byte[] name = className.getBytes();
+        String colorFromName = className.substring(className.indexOf('-') + 1, className.length());
+        colorFromName = colorFromName.substring(0, colorFromName.indexOf('-'));
 
-        for (int i=0; i<name.length; i++) {
-            rgb[i%3] += name[i];
+        switch (colorFromName) {
+            case "red":
+                return Color.RED;
+            case "green":
+                return Color.GREEN;
+            case "purple":
+                return Color.BLUE;
+            default:
+                return Color.GRAY;
         }
-
-        //Hue saturation
-        for (int i=0; i<rgb.length; i++) {
-            if (rgb[i] < 120) {
-                rgb[i] += 120;
-            }
-        }
-
-        return Color.rgb(rgb[0], rgb[1], rgb[2]);
     }
 
     public Vector<String> getLabels() {
