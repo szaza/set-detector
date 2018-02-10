@@ -1,18 +1,3 @@
-/* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
 package org.tensorflow.yolo.view;
 
 import android.content.Context;
@@ -70,7 +55,7 @@ public class OverlayView extends View {
         if (results != null) {
             for (int i = 0; i < results.size(); i++) {
                 RectF box = reCalcSize(results.get(i).getLocation());
-                String title = convertTitle(results.get(i).getTitle()) + ":"
+                String title = results.get(i).getTitle() + ":"
                         + String.format("%.2f", results.get(i).getConfidence());
                 paint.setColor(colors.get(results.get(i).getId()));
                 canvas.drawRect(box, paint);
@@ -89,27 +74,6 @@ public class OverlayView extends View {
      */
     public interface DrawCallback {
         void drawCallback(final Canvas canvas);
-    }
-
-    private String convertTitle(String title) {
-        String[] colors = new String[]{"red","green","purple"};
-        for (String color: colors) {
-            title = title.replace(color+"-","");
-        }
-
-        Map<String, String> replacements = new HashMap();
-        replacements.put("one","1");
-        replacements.put("two","2");
-        replacements.put("three","3");
-        replacements.put("blank","bla");
-        replacements.put("striped","str");
-        replacements.put("filled","fil");
-        
-        for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            title = title.replace(entry.getKey(), entry.getValue());
-        }
-
-        return title;
     }
 
     private RectF reCalcSize(BoxPosition rect) {
