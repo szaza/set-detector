@@ -1,0 +1,13 @@
+spring:
+  http:
+    multipart:
+      max-file-size: 300KB
+      max-request-size: 300KB
+application:
+  graph: ./graph/YOLO/yolo-setcards.pb
+  label: ./graph/YOLO/yolo-setcards-labels.txt
+  outputDir: ./predicted
+  uploadDir: ./upload-dir
+  imageSize: 416
+  imageMean: 255
+

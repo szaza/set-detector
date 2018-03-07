@@ -1,74 +1,40 @@
-// This file provides basic support for building the TensorFlow demo
-// in Android Studio with Gradle.
-//
-// Note that Bazel is still used by default to compile the native libs,
-// and should be installed at the location noted below. This build file
-// automates the process of calling out to it and copying the compiled
-// libraries back into the appropriate directory.
-//
-// Alternatively, experimental support for Makefile builds is provided by
-// setting buildWithMake below to true. This will allow building the demo
-// on Windows machines, but note that full equivalence with the Bazel
-// build is not yet guaranteed. See comments below for caveats and tips
-// for speeding up the build, such as as enabling ccache.
-project.buildDir = 'gradleBuild'
-getProject().setBuildDir('gradleBuild')
-project.ext.ASSET_DIR = projectDir.toString() + '/assets'
-assert file(project.ext.ASSET_DIR + "/tiny-yolo-setcards.pb").exists()
-assert file(project.ext.ASSET_DIR + "/tiny-yolo-setcards.txt").exists()
+group 'edu.ml.tensorflow.java'
+version '1.0.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 buildscript {
     repositories {
-        jcenter()
-        google()
+        mavenCentral()
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE")
     }
 }
-apply plugin: 'com.android.application'
-android {
-    compileSdkVersion 25
-    buildToolsVersion '26.0.2'
 
-    lintOptions {
-        abortOnError false
-    }
-
-    sourceSets {
-        main {
-            java {
-                srcDir 'src'
-            }
-
-            manifest.srcFile 'AndroidManifest.xml'
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = [project.ext.ASSET_DIR]
-
-            repositories {
-                jcenter()
-            }
-
-            dependencies {
-                compile 'org.tensorflow:tensorflow-android:1.2.0-preview'
-            }
-
-        }
-
-        debug.setRoot('build-types/debug')
-        release.setRoot('build-types/release')
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+jar {
+    baseName = 'java-tensorflow-service'
+    version =  '0.1.0'
 }
+
 repositories {
-    google()
+    mavenCentral()
 }
+
 dependencies {
+    compile group: 'org.tensorflow', name: 'tensorflow', version: '1.6.0'
+    compile group: 'org.tensorflow', name: 'libtensorflow', version: '1.6.0'
+
+    // Please read the requirements for the GPU support here: https://www.tensorflow.org/install/install_java
+    // compile group: 'org.tensorflow', name: 'libtensorflow_jni_gpu', version: '1.6.0'
+
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile 'org.apache.commons:commons-math3:3.2'
+
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 }
