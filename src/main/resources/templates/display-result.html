@@ -9,6 +9,10 @@
             integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
             integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js"></script>
+
     <link href="static/css/style.css" rel="stylesheet" type="text/css" />
 </head>
     <body>
@@ -23,24 +27,26 @@
             </div>
             <div class="row">
                 <div class="col-sm">
-                    <img th:src="${predictedImage}" th:title="${predictedImage}" th:alt="${predictedImage}" th:width="200" />
+                    <img th:src="${result.predictedImage}" th:title="${result.predictedImage}" th:alt="${result.predictedImage}" th:width="200" />
                 </div>
                 <div class="col-sm">
                     <ul>
-                        <th:block th:each="recognition : ${recognitions}">
-                            <li><span th:text="${recognition.title}"></span><span> - </span><span th:text="${recognition.confidence}"></span></li>
+                        <th:block th:each="recognition : ${result.recognitions}">
+                            <li><span th:text="${recognition}"></span></li>
                         </th:block>
                     </ul>
                 </div>
             </div>
-            <th:block th:if="${validSets.size()} > 0">
+            <th:block th:if="${result.validSetList.size()} > 0">
                 <div class="row">
-                    <th:block th:each="validSet, iter : ${validSets}">
+                    <th:block th:each="validSet : ${result.validSetList}">
                         <div class="col-sm mt-4">
                             <div class="row predicted-img">
-                                <img th:src="${labeledSets.get(iter.index)}" th:title="Set" th:alt="Set" />
+                                <a data-fancybox="gallery" th:href="${validSet.getImagePath()}">
+                                    <img th:src="${validSet.getImagePath()}" th:title="Set" th:alt="Set" />
+                                </a>
                             </div>
-                            <th:block th:each="card : ${validSets.get(iter.index).cards}">
+                            <th:block th:each="card : ${validSet.getSetOfCards().getCards()}">
                                 <div class="row">
                                     <span th:text="${card.toString()}"></span>
                                 </div>
@@ -49,7 +55,7 @@
                     </th:block>
                 </div>
             </th:block>
-            <th:block th:if="${validSets.size()} == 0">
+            <th:block th:if="${result.validSetList.size()} == 0">
                 There is no set detected!
             </th:block>
         </div>

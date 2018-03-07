@@ -1,11 +1,15 @@
-package edu.ml.tensorflow.util;
+package edu.ml.tensorflow.service;
 
 import edu.ml.tensorflow.ApplicationProperties;
 import edu.ml.tensorflow.model.analyzer.SetOfCards;
 import edu.ml.tensorflow.model.recognition.BoxPosition;
 import edu.ml.tensorflow.model.recognition.Recognition;
+import edu.ml.tensorflow.util.IOUtil;
+import edu.ml.tensorflow.util.ServiceException;
+import groovy.lang.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,34 +17,22 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Util class for image processing.
+ * Image processor class
  */
-public class ImageUtil {
-    private final static Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class);
-    private static ImageUtil imageUtil;
+@Service
+@Singleton
+public class ImageProcessor {
+    private final static Logger LOGGER = LoggerFactory.getLogger(ImageProcessor.class);
     private ApplicationProperties applicationProperties;
 
-    private ImageUtil(final ApplicationProperties applicationProperties) {
+    public ImageProcessor(final ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
         IOUtil.createDirIfNotExists(new File(applicationProperties.getOutputDir()));
-    }
-
-    /**
-     * It returns the singleton instance of this class.
-     * @return ImageUtil instance
-     */
-    public static ImageUtil getInstance(final ApplicationProperties applicationProperties) {
-        if (imageUtil == null) {
-            imageUtil = new ImageUtil(applicationProperties);
-        }
-
-        return imageUtil;
     }
 
     /**
@@ -50,7 +42,7 @@ public class ImageUtil {
      * @return location of the labeled image
      */
     public String labelImage(final byte[] image, final List<Recognition> recognitions, final String fileName) {
-        BufferedImage bufferedImage = imageUtil.createImageFromBytes(image);
+        BufferedImage bufferedImage = createImageFromBytes(image);
         float scaleX = (float) bufferedImage.getWidth() / (float) applicationProperties.getImageSize();
         float scaleY = (float) bufferedImage.getHeight() / (float) applicationProperties.getImageSize();
         Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
@@ -68,16 +60,11 @@ public class ImageUtil {
         return saveImage(bufferedImage, applicationProperties.getOutputDir() + "/" + fileName);
     }
 
-    public List<String> labelSets(final byte[] image, final List<SetOfCards> setOfCards) {
-        List<String> labeledSet = new ArrayList();
-        for (SetOfCards soc : setOfCards) {
-            List<Recognition> recognitions = soc.getCards().stream()
-                    .map((card) -> card.getRecognition()).collect(Collectors.toList());
+    public String labelCards(final byte[] image, final SetOfCards setOfCards) {
+        List<Recognition> recognitions = setOfCards.getCards().stream()
+                .map((card) -> card.getRecognition()).collect(Collectors.toList());
 
-            labeledSet.add(labelImage(image, recognitions, UUID.randomUUID().toString()));
-        }
-
-        return labeledSet;
+        return labelImage(image, recognitions, UUID.randomUUID().toString() + ".jpg");
     }
 
     /**

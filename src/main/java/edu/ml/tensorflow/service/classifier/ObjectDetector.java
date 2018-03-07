@@ -1,13 +1,9 @@
 package edu.ml.tensorflow.service.classifier;
 
 import edu.ml.tensorflow.ApplicationProperties;
-import edu.ml.tensorflow.model.analyzer.Grid;
-import edu.ml.tensorflow.model.analyzer.SetOfCards;
 import edu.ml.tensorflow.model.recognition.Recognition;
-import edu.ml.tensorflow.service.analyzer.GridAnalyzer;
 import edu.ml.tensorflow.util.GraphBuilder;
 import edu.ml.tensorflow.util.IOUtil;
-import edu.ml.tensorflow.util.ImageUtil;
 import edu.ml.tensorflow.util.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +15,7 @@ import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 
 import java.nio.FloatBuffer;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ObjectDetector class to detect objects using pre-trained models with TensorFlow Java API.
@@ -31,12 +25,10 @@ public class ObjectDetector {
     private final static Logger LOGGER = LoggerFactory.getLogger(ObjectDetector.class);
     private byte[] GRAPH_DEF;
     private List<String> LABELS;
-    private final GridAnalyzer gridAnalyzer;
     private ApplicationProperties applicationProperties;
 
     @Autowired
-    public ObjectDetector(final GridAnalyzer gridAnalyzer, final ApplicationProperties applicationProperties) {
-        this.gridAnalyzer = gridAnalyzer;
+    public ObjectDetector(final ApplicationProperties applicationProperties) {
         this.applicationProperties = applicationProperties;
         try {
             GRAPH_DEF = IOUtil.readAllBytesOrExit(applicationProperties.getGraph());
@@ -49,27 +41,14 @@ public class ObjectDetector {
 
     /**
      * Detect objects on the given image
-     * @param imageLocation the location of the image
-     * @return a map with location of the labeled image and recognitions
+     * @param image to process
+     * @return a list of the recognized objects
      */
-    public Map<String, Object> detect(final String imageLocation) {
-        byte[] image = IOUtil.readAllBytesOrExit(imageLocation);
+    public List<Recognition> detect(final byte[] image) {
         try (Tensor<Float> normalizedImage = normalizeImage(image)) {
             List<Recognition> recognitions = YOLOClassifier.getInstance().classifyImage(executeYOLOGraph(normalizedImage), LABELS);
-            List<SetOfCards> validSets = gridAnalyzer.detectSet(new Grid(recognitions));
-
             printToConsole(recognitions);
-            ImageUtil imageUtil = ImageUtil.getInstance(applicationProperties);
-            String labeledFilePath = imageUtil.labelImage(image, recognitions, IOUtil.getFileName(imageLocation));
-
-            List<String> labeledSets = imageUtil.labelSets(image, validSets);
-
-            Map<String, Object> result = new HashMap();
-            result.put("labeledFilePath", labeledFilePath);
-            result.put("recognitions", recognitions);
-            result.put("validSets", validSets);
-            result.put("labeledSets", labeledSets);
-            return result;
+            return recognitions;
         }
     }
 

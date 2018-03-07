@@ -1,12 +1,11 @@
 package edu.ml.tensorflow.service.api;
 
-import edu.ml.tensorflow.model.analyzer.Grid;
-import edu.ml.tensorflow.model.analyzer.SetOfCards;
-import edu.ml.tensorflow.model.recognition.Recognition;
-import edu.ml.tensorflow.service.analyzer.GridAnalyzer;
+import edu.ml.tensorflow.service.api.assembler.ResultAssembler;
+import edu.ml.tensorflow.service.api.dto.ResultDTO;
 import edu.ml.tensorflow.service.classifier.ObjectDetector;
 import edu.ml.tensorflow.service.exception.ServiceException;
 import edu.ml.tensorflow.service.storage.StorageService;
+import edu.ml.tensorflow.util.IOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -22,19 +21,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 public class FileUploadController {
     private final StorageService storageService;
     private final ObjectDetector objectDetector;
+    private final ResultAssembler resultAssembler;
 
     @Autowired
-    public FileUploadController(final StorageService storageService, final ObjectDetector objectDetector) {
+    public FileUploadController(final StorageService storageService, final ObjectDetector objectDetector,
+                                final ResultAssembler resultAssembler) {
         this.storageService = storageService;
         this.objectDetector = objectDetector;
+        this.resultAssembler = resultAssembler;
     }
 
     @GetMapping("/")
@@ -52,15 +51,10 @@ public class FileUploadController {
 
     @PostMapping("/")
     public String handleFileUpload(@RequestParam("file") MultipartFile file, Model model) {
-        String originalImagePath = "/upload-dir/" + storageService.store(file);
-        Map<String, Object> result = objectDetector.detect("." + originalImagePath);
-
+        byte[] image = IOUtil.readAllBytesOrExit(storageService.store(file));
+        ResultDTO resultDTO = resultAssembler.convertToDTO(objectDetector.detect(image), image);
         model.addAttribute("originalName", file.getOriginalFilename());
-        model.addAttribute("originalImage", originalImagePath);
-        model.addAttribute("predictedImage", result.get("labeledFilePath"));
-        model.addAttribute("recognitions", result.get("recognitions"));
-        model.addAttribute("validSets", result.get("validSets"));
-        model.addAttribute("labeledSets", result.get("labeledSets"));
+        model.addAttribute("result", resultDTO);
         return "display-result";
     }
 
