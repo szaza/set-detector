@@ -30,14 +30,11 @@ import java.util.Map;
 public class FileUploadController {
     private final StorageService storageService;
     private final ObjectDetector objectDetector;
-    private final GridAnalyzer gridAnalyzer;
 
     @Autowired
-    public FileUploadController(final StorageService storageService, final ObjectDetector objectDetector,
-                                final GridAnalyzer gridAnalyzer) {
+    public FileUploadController(final StorageService storageService, final ObjectDetector objectDetector) {
         this.storageService = storageService;
         this.objectDetector = objectDetector;
-        this.gridAnalyzer = gridAnalyzer;
     }
 
     @GetMapping("/")
@@ -57,14 +54,13 @@ public class FileUploadController {
     public String handleFileUpload(@RequestParam("file") MultipartFile file, Model model) {
         String originalImagePath = "/upload-dir/" + storageService.store(file);
         Map<String, Object> result = objectDetector.detect("." + originalImagePath);
-        List<Recognition> recognitionList = (List<Recognition>) result.get("recognitions");
-        List<SetOfCards> validSets = gridAnalyzer.detectSet(new Grid(recognitionList));
 
         model.addAttribute("originalName", file.getOriginalFilename());
         model.addAttribute("originalImage", originalImagePath);
         model.addAttribute("predictedImage", result.get("labeledFilePath"));
-        model.addAttribute("recognitions", recognitionList);
-        model.addAttribute("validSets", validSets);
+        model.addAttribute("recognitions", result.get("recognitions"));
+        model.addAttribute("validSets", result.get("validSets"));
+        model.addAttribute("labeledSets", result.get("labeledSets"));
         return "display-result";
     }
 

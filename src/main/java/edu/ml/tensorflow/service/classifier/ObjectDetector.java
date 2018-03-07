@@ -1,7 +1,10 @@
 package edu.ml.tensorflow.service.classifier;
 
 import edu.ml.tensorflow.ApplicationProperties;
+import edu.ml.tensorflow.model.analyzer.Grid;
+import edu.ml.tensorflow.model.analyzer.SetOfCards;
 import edu.ml.tensorflow.model.recognition.Recognition;
+import edu.ml.tensorflow.service.analyzer.GridAnalyzer;
 import edu.ml.tensorflow.util.GraphBuilder;
 import edu.ml.tensorflow.util.IOUtil;
 import edu.ml.tensorflow.util.ImageUtil;
@@ -28,10 +31,12 @@ public class ObjectDetector {
     private final static Logger LOGGER = LoggerFactory.getLogger(ObjectDetector.class);
     private byte[] GRAPH_DEF;
     private List<String> LABELS;
+    private final GridAnalyzer gridAnalyzer;
     private ApplicationProperties applicationProperties;
 
     @Autowired
-    public ObjectDetector(final ApplicationProperties applicationProperties) {
+    public ObjectDetector(final GridAnalyzer gridAnalyzer, final ApplicationProperties applicationProperties) {
+        this.gridAnalyzer = gridAnalyzer;
         this.applicationProperties = applicationProperties;
         try {
             GRAPH_DEF = IOUtil.readAllBytesOrExit(applicationProperties.getGraph());
@@ -51,12 +56,19 @@ public class ObjectDetector {
         byte[] image = IOUtil.readAllBytesOrExit(imageLocation);
         try (Tensor<Float> normalizedImage = normalizeImage(image)) {
             List<Recognition> recognitions = YOLOClassifier.getInstance().classifyImage(executeYOLOGraph(normalizedImage), LABELS);
+            List<SetOfCards> validSets = gridAnalyzer.detectSet(new Grid(recognitions));
+
             printToConsole(recognitions);
-            String labeledFilePath = ImageUtil.getInstance(applicationProperties).labelImage(image, recognitions, IOUtil.getFileName(imageLocation));
+            ImageUtil imageUtil = ImageUtil.getInstance(applicationProperties);
+            String labeledFilePath = imageUtil.labelImage(image, recognitions, IOUtil.getFileName(imageLocation));
+
+            List<String> labeledSets = imageUtil.labelSets(image, validSets);
 
             Map<String, Object> result = new HashMap();
             result.put("labeledFilePath", labeledFilePath);
             result.put("recognitions", recognitions);
+            result.put("validSets", validSets);
+            result.put("labeledSets", labeledSets);
             return result;
         }
     }

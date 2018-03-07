@@ -1,6 +1,7 @@
 package edu.ml.tensorflow.util;
 
 import edu.ml.tensorflow.ApplicationProperties;
+import edu.ml.tensorflow.model.analyzer.SetOfCards;
 import edu.ml.tensorflow.model.recognition.BoxPosition;
 import edu.ml.tensorflow.model.recognition.Recognition;
 import org.slf4j.Logger;
@@ -12,7 +13,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Util class for image processing.
@@ -62,6 +66,18 @@ public class ImageUtil {
 
         graphics.dispose();
         return saveImage(bufferedImage, applicationProperties.getOutputDir() + "/" + fileName);
+    }
+
+    public List<String> labelSets(final byte[] image, final List<SetOfCards> setOfCards) {
+        List<String> labeledSet = new ArrayList();
+        for (SetOfCards soc : setOfCards) {
+            List<Recognition> recognitions = soc.getCards().stream()
+                    .map((card) -> card.getRecognition()).collect(Collectors.toList());
+
+            labeledSet.add(labelImage(image, recognitions, UUID.randomUUID().toString()));
+        }
+
+        return labeledSet;
     }
 
     /**

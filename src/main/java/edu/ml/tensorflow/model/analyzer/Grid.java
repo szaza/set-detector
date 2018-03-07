@@ -9,10 +9,6 @@ import java.util.List;
 public class Grid {
     private LinkedHashSet<Card> grid;
 
-    public Grid(final LinkedHashSet<Card> cards) {
-        this.grid = cards;
-    }
-
     public Grid(final List<Recognition> recognitionList) {
         this.grid = new LinkedHashSet();
         for (Recognition recognition : recognitionList) {

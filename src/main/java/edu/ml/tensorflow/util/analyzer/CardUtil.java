@@ -71,6 +71,7 @@ public final class CardUtil {
     public static Card convertRecognitionToCard(final Recognition recognition) {
         String[] cardAttributes = recognition.getTitle().split("-");
         Card card = new Card();
+        card.setRecognition(recognition);
 
         // Set number
         try {

@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>TensorFlow Java API object detection sample</title>
+    <title>SET detector</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
           integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"/>
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
@@ -9,10 +9,11 @@
             integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
             integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <link href="static/css/style.css" rel="stylesheet" type="text/css" />
 </head>
     <body>
         <div class="navbar navbar-fixed-top navbar-inverse bg-inverse">
-            <a href="/" title="TensorFlow Java API with YOLO" class="navbar-brand">TensorFlow Java API with YOLO</a>
+            <a href="/" title="SET detector" class="navbar-brand">SET detector</a>
         </div>
         <div class="container">
             <div th:if="${originalName}" class="row mt-4">
@@ -21,46 +22,36 @@
                 </p>
             </div>
             <div class="row">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Input image</th>
-                            <th>Result</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><img th:src="${originalImage}" th:title="${originalImage}" th:alt="${originalImage}" th:width="416" /></td>
-                            <td><img th:src="${predictedImage}" th:title="${predictedImage}" th:alt="${predictedImage}" th:width="416" /></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <th:block th:if="${validSets.size()} > 0">
-                                    <ul>
-                                        <th:block th:each="set : ${validSets}">
-                                            <li>
-                                                <th:block th:each="card : ${set.cards}">
-                                                    <span th:text="${card.toString()}"></span>
-                                                </th:block>
-                                            </li>
-                                        </th:block>
-                                    </ul>
-                                </th:block>
-                                <th:block th:if="${validSets.size()} == 0">
-                                    There is no set detected!
-                                </th:block>
-                            </td>
-                            <td>
-                                <ul>
-                                    <th:block th:each="recognition : ${recognitions}">
-                                        <li><span th:text="${recognition.title}"></span><span> - </span><span th:text="${recognition.confidence}"></span></li>
-                                    </th:block>
-                                </ul>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="col-sm">
+                    <img th:src="${predictedImage}" th:title="${predictedImage}" th:alt="${predictedImage}" th:width="200" />
+                </div>
+                <div class="col-sm">
+                    <ul>
+                        <th:block th:each="recognition : ${recognitions}">
+                            <li><span th:text="${recognition.title}"></span><span> - </span><span th:text="${recognition.confidence}"></span></li>
+                        </th:block>
+                    </ul>
+                </div>
             </div>
+            <th:block th:if="${validSets.size()} > 0">
+                <div class="row">
+                    <th:block th:each="validSet, iter : ${validSets}">
+                        <div class="col-sm mt-4">
+                            <div class="row predicted-img">
+                                <img th:src="${labeledSets.get(iter.index)}" th:title="Set" th:alt="Set" />
+                            </div>
+                            <th:block th:each="card : ${validSets.get(iter.index).cards}">
+                                <div class="row">
+                                    <span th:text="${card.toString()}"></span>
+                                </div>
+                            </th:block>
+                        </div>
+                    </th:block>
+                </div>
+            </th:block>
+            <th:block th:if="${validSets.size()} == 0">
+                There is no set detected!
+            </th:block>
         </div>
     </body>
 </html>

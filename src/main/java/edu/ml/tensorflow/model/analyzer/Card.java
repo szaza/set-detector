@@ -1,5 +1,6 @@
 package edu.ml.tensorflow.model.analyzer;
 
+import edu.ml.tensorflow.model.recognition.Recognition;
 import edu.ml.tensorflow.util.analyzer.CardUtil;
 import java.util.Objects;
 
@@ -12,6 +13,8 @@ public class Card {
     private Integer fill;
     // Number of shapes
     private Integer number;
+
+    private Recognition recognition;
 
     public Integer getColor() {
         return color;
@@ -45,6 +48,14 @@ public class Card {
         this.number = number;
     }
 
+    public Recognition getRecognition() {
+        return recognition;
+    }
+
+    public void setRecognition(Recognition recognition) {
+        this.recognition = recognition;
+    }
+
     public Integer getAttrByCategoryIndex(final int index) {
         switch (index) {
             case 0: return getNumber();
@@ -71,10 +82,9 @@ public class Card {
 
     @Override
     public String toString() {
-        return "Card{" + (this.getNumber()+1) +
+        return (this.getNumber()+1) +
                 "-" + CardUtil.convertToColor(color) +
                 "-" + CardUtil.convertToFill(fill) +
-                "-" + CardUtil.convertToShape(shape) +
-                '}';
+                "-" + CardUtil.convertToShape(shape);
     }
 }
