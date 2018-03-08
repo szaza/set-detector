@@ -9,6 +9,7 @@ import edu.ml.tensorflow.util.IOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,6 +57,12 @@ public class FileUploadController {
         model.addAttribute("originalName", file.getOriginalFilename());
         model.addAttribute("result", resultDTO);
         return "display-result";
+    }
+
+    @PostMapping(value = "/mobile", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultDTO> handleFileUpload(@RequestParam("file") MultipartFile file) {
+        byte[] image = IOUtil.readAllBytesOrExit(storageService.store(file));
+        return ResponseEntity.ok().body(resultAssembler.convertToDTO(objectDetector.detect(image), image));
     }
 
     @ExceptionHandler(ServiceException.class)

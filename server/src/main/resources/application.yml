@@ -6,8 +6,8 @@ spring:
 application:
   graph: ./graph/YOLO/yolo-setcards.pb
   label: ./graph/YOLO/yolo-setcards-labels.txt
-  outputDir: ./predicted
-  uploadDir: ./upload-dir
+  outputDir: predicted
+  uploadDir: upload-dir
   imageSize: 416
   imageMean: 255
 

@@ -20,10 +20,7 @@ public class SetOfCards {
 
     public SetOfCards clone() {
         SetOfCards clone = new SetOfCards();
-        for (Card card : cards) {
-            clone.add(card);
-        }
-
+        cards.forEach(card -> clone.add(card));
         return  clone;
     }
 
@@ -31,12 +28,7 @@ public class SetOfCards {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("SetOfCards{");
-
-        for (Card card : cards) {
-            stringBuilder.append(card);
-            stringBuilder.append(", ");
-        }
-
+        cards.forEach(card -> {stringBuilder.append(card); stringBuilder.append(", ");});
         stringBuilder.append("}");
         return stringBuilder.toString();
     }

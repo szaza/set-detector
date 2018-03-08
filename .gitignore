@@ -35,6 +35,6 @@ build/
 bin/
 log/
 out/
-graph/YOLO/
-predicted/
-upload-dir/
+server/graph/YOLO/
+server/predicted/
+server/upload-dir/

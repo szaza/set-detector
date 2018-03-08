@@ -6,12 +6,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ValidSetAssembler {
+    private final SetOfCardsAssembler setOfCardsAssembler;
 
-    public ValidSetAssembler() {}
+    public ValidSetAssembler(final SetOfCardsAssembler setOfCardsAssembler) {
+        this.setOfCardsAssembler = setOfCardsAssembler;
+    }
 
     public ValidSetDTO convertToDTO(final SetOfCards setOfCards, final String imagePath) {
         ValidSetDTO validSetDTO = new ValidSetDTO();
-        validSetDTO.setSetOfCards(setOfCards);
+        validSetDTO.setSetOfCards(setOfCardsAssembler.convertToDTO(setOfCards));
         validSetDTO.setImagePath(imagePath);
         return validSetDTO;
     }

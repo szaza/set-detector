@@ -52,7 +52,7 @@ public class ImageProcessor {
         for (Recognition recognition: recognitions) {
             BoxPosition box = recognition.getScaledLocation(scaleX, scaleY);
             //draw text
-            graphics.drawString(recognition.getTitle() + " " + recognition.getConfidence(), box.getLeft(), box.getTop() - 7);
+            graphics.drawString(recognition.getTitle(), box.getLeft(), box.getTop() - 7);
             // draw bounding box
             graphics.drawRect(box.getLeftInt(),box.getTopInt(), box.getWidthInt(), box.getHeightInt());
         }
