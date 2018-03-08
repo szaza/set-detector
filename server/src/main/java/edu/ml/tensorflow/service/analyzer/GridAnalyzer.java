@@ -1,21 +1,21 @@
 package edu.ml.tensorflow.service.analyzer;
 
 import edu.ml.tensorflow.model.analyzer.Card;
+import edu.ml.tensorflow.model.analyzer.Grid;
 import edu.ml.tensorflow.model.analyzer.SetOfCards;
 import edu.ml.tensorflow.util.analyzer.AttributeConverter;
-
 import edu.ml.tensorflow.util.analyzer.CardUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import edu.ml.tensorflow.model.analyzer.Grid;
-import org.springframework.stereotype.Service;
 
 import static edu.ml.tensorflow.config.AnalyzerConfig.ATTR_NR;
 import static edu.ml.tensorflow.config.AnalyzerConfig.SET_SIZE;
@@ -43,8 +43,12 @@ public class GridAnalyzer {
      * @return list of sets
      */
     public List<SetOfCards> detectSet(final Grid grid) {
-        categorizeCards(grid);
-        return detectSetByCategory(getLowestMaximum());
+        if (grid.getGrid().size() > 2) {
+            categorizeCards(grid);
+            return detectSetByCategory(getLowestMaximum());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private void categorizeCards(final Grid grid) {
