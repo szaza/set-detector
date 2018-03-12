@@ -12,8 +12,9 @@ public class ImageUtils {
     // are normalized to eight bits.
     static final int kMaxChannelValue = 262143;
 
-    public static void convertYUV420ToARGB8888(byte[] yData, byte[] uData, byte[] vData, int width, int height,
-                                               int yRowStride, int uvRowStride, int uvPixelStride, int[] out) {
+    public static int[] convertYUV420ToARGB8888(byte[] yData, byte[] uData, byte[] vData, int width, int height,
+                                               int yRowStride, int uvRowStride, int uvPixelStride) {
+        int[] out = new int[width * height];
         int i = 0;
         for (int y = 0; y < height; y++) {
             int pY = yRowStride * y;
@@ -29,6 +30,8 @@ public class ImageUtils {
                         convertByteToInt(vData, pV + uv_offset));
             }
         }
+
+        return out;
     }
 
     private static int convertByteToInt(byte[] arr, int pos) {

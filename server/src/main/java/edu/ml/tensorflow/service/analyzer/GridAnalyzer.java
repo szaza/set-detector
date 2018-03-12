@@ -151,15 +151,17 @@ public class GridAnalyzer {
             }
         }
 
-        // Combination of cards by column
-        for (Card card1 : cardsByCategory.get(AttributeConverter.convertToAttr(categoryIndex, (byte) 0))) {
-            for (Card card2 : cardsByCategory.get(AttributeConverter.convertToAttr(categoryIndex, (byte) 1))) {
-                for (Card card3 : cardsByCategory.get(AttributeConverter.convertToAttr(categoryIndex, (byte) 2))) {
-                    SetOfCards setOfCards = new SetOfCards();
-                    setOfCards.add(card1);
-                    setOfCards.add(card2);
-                    setOfCards.add(card3);
-                    possibleSets.add(setOfCards);
+        if (cardsByCategory.size() > 2) {
+            // Combination of cards by column
+            for (Card card1 : cardsByCategory.get(AttributeConverter.convertToAttr(categoryIndex, (byte) 0))) {
+                for (Card card2 : cardsByCategory.get(AttributeConverter.convertToAttr(categoryIndex, (byte) 1))) {
+                    for (Card card3 : cardsByCategory.get(AttributeConverter.convertToAttr(categoryIndex, (byte) 2))) {
+                        SetOfCards setOfCards = new SetOfCards();
+                        setOfCards.add(card1);
+                        setOfCards.add(card2);
+                        setOfCards.add(card3);
+                        possibleSets.add(setOfCards);
+                    }
                 }
             }
         }

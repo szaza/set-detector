@@ -3,23 +3,13 @@ package edu.tensorflow.client.camera;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.media.Image.Plane;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.util.Log;
 import android.util.Size;
 import android.view.WindowManager;
 import android.widget.Toast;
-
-import java.nio.ByteBuffer;
-
 import edu.tensorflow.client.R;
-import edu.tensorflow.client.camera.view.OverlayView;
-
-import static edu.tensorflow.client.Config.LOGGING_TAG;
 
 /**
  * Camera activity class.
@@ -27,9 +17,6 @@ import static edu.tensorflow.client.Config.LOGGING_TAG;
  */
 public abstract class CameraActivity extends Activity implements OnImageAvailableListener {
     private static final int PERMISSIONS_REQUEST = 1;
-
-    private Handler handler;
-    private HandlerThread handlerThread;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -48,10 +35,6 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
     @Override
     public synchronized void onResume() {
         super.onResume();
-
-        handlerThread = new HandlerThread("inference");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
     }
 
     @Override
@@ -59,23 +42,7 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
         if (!isFinishing()) {
             finish();
         }
-
-        handlerThread.quitSafely();
-        try {
-            handlerThread.join();
-            handlerThread = null;
-            handler = null;
-        } catch (final InterruptedException ex) {
-            Log.e(LOGGING_TAG, "Exception: " + ex.getMessage());
-        }
-
         super.onPause();
-    }
-
-    protected synchronized void runInBackground(final Runnable runnable) {
-        if (handler != null) {
-            handler.post(runnable);
-        }
     }
 
     @Override
@@ -124,33 +91,6 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
                 .beginTransaction()
                 .replace(R.id.container, cameraConnectionFragment)
                 .commit();
-    }
-
-    protected void fillBytes(final Plane[] planes, final byte[][] yuvBytes) {
-        // Because of the variable row stride it's not possible to know in
-        // advance the actual necessary dimensions of the yuv planes.
-        for (int i = 0; i < planes.length; ++i) {
-            final ByteBuffer buffer = planes[i].getBuffer();
-            if (yuvBytes[i] == null) {
-                Log.d(LOGGING_TAG, String.format("Initializing buffer %d at size %d", i, buffer.capacity()));
-                yuvBytes[i] = new byte[buffer.capacity()];
-            }
-            buffer.get(yuvBytes[i]);
-        }
-    }
-
-    public void requestRender() {
-        final OverlayView overlay = findViewById(R.id.overlay);
-        if (overlay != null) {
-            overlay.postInvalidate();
-        }
-    }
-
-    public void addCallback(final OverlayView.DrawCallback callback) {
-        final OverlayView overlay = findViewById(R.id.overlay);
-        if (overlay != null) {
-            overlay.addCallback(callback);
-        }
     }
 
     protected abstract void onPreviewSizeChosen(final Size size, final int rotation);

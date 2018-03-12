@@ -14,11 +14,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Zoltan Szabo on 3/8/18.
  */
 
-public class RetrofitService {
-    private final static String SERVER_PATH = "http://192.168.48.255:8080/";
+public class SETDetectorService {
+    private final static String SERVER_PATH = "http://192.168.48.106:8080";
     private final SetCardDetectorService setCardDetectorService;
 
-    public RetrofitService() {
+    public SETDetectorService() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(SERVER_PATH)
                 .addConverterFactory(GsonConverterFactory.create())
