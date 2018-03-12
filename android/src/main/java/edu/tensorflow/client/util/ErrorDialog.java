@@ -1,45 +1,36 @@
 package edu.tensorflow.client.util;
 
-/**
- * Created by Zoltan Szabo on 3/8/18.
- */
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 
 /**
+ * Created by Zoltan Szabo on 1/13/18.
+ *
  * Shows an error message dialog.
+ * URL: https://github.com/szaza/android-yolo-v2
  */
 public class ErrorDialog extends DialogFragment {
-
     private static final String ARG_MESSAGE = "message";
 
-    public static ErrorDialog newInstance(String message) {
-        ErrorDialog dialog = new ErrorDialog();
-        Bundle args = new Bundle();
+    public static ErrorDialog newInstance(final String message) {
+        final ErrorDialog dialog = new ErrorDialog();
+        final Bundle args = new Bundle();
         args.putString(ARG_MESSAGE, message);
         dialog.setArguments(args);
         return dialog;
     }
 
-    @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
         final Activity activity = getActivity();
         return new AlertDialog.Builder(activity)
                 .setMessage(getArguments().getString(ARG_MESSAGE))
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        activity.finish();
-                    }
-                })
+                .setPositiveButton(android.R.string.ok,
+                        (final DialogInterface dialogInterface, final int i) -> activity.finish())
                 .create();
     }
-
 }

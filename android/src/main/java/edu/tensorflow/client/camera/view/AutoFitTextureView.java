@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.tensorflow.client.camera;
+package edu.tensorflow.client.camera.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

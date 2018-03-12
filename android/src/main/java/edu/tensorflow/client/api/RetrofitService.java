@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitService {
-    private final static String SERVER_PATH = "http://192.168.48.106:8080/";
+    private final static String SERVER_PATH = "http://192.168.48.255:8080/";
     private final SetCardDetectorService setCardDetectorService;
 
     public RetrofitService() {

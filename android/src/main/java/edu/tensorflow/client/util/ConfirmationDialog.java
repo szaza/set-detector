@@ -14,7 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 
-import com.example.android.camera2basic.R;
+import edu.tensorflow.client.R;
 
 /**
  * Shows OK/Cancel confirmation dialog about camera permission.

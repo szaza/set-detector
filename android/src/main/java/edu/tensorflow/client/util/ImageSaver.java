@@ -36,7 +36,7 @@ public class ImageSaver implements Runnable {
     public void run() {
         Bitmap bitmap = convertImageToBitmap(image);
         try (FileOutputStream output = new FileOutputStream(file)) {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, output);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
