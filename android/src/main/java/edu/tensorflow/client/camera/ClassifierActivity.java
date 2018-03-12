@@ -46,6 +46,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private Handler backgroundHandler;
     private SETDetectorService setDetectorService;
     private File file;
+    private boolean compute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         file = new File(this.getExternalFilesDir(null), "pic.jpg");
         findViewById(R.id.send).setOnClickListener((View v) -> {
             if (croppedBitmap != null) {
+                compute = true;
                 PersistImageTask persistImageTask = new PersistImageTask();
                 persistImageTask.setBitmap(croppedBitmap);
                 persistImageTask.setFile(file);
@@ -71,11 +73,13 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                             @Override
                             public void onResponse(Call<ResultDTO> call, Response<ResultDTO> response) {
                                 Log.i(LOGGING_TAG, "Success: " + response.body().toString());
+                                compute = false;
                             }
 
                             @Override
                             public void onFailure(Call<ResultDTO> call, Throwable t) {
                                 Log.e(LOGGING_TAG, "Error: " + t.getMessage());
+                                compute = false;
                             }
                         });
 
@@ -124,8 +128,10 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 return;
             }
 
-            rgbFrameBitmap.setPixels(convertYUVToARGB(image), 0, previewWidth, 0, 0, previewWidth, previewHeight);
-            new Canvas(croppedBitmap).drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
+            if (!compute) {
+                rgbFrameBitmap.setPixels(convertYUVToARGB(image), 0, previewWidth, 0, 0, previewWidth, previewHeight);
+                new Canvas(croppedBitmap).drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
+            }
             image.close();
         } catch (final Exception ex) {
             if (image != null) {

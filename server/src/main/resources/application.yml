@@ -1,8 +1,8 @@
 spring:
   http:
     multipart:
-      max-file-size: 300KB
-      max-request-size: 300KB
+      max-file-size: 1024KB
+      max-request-size: 1024KB
 application:
   graph: ./graph/YOLO/yolo-setcards.pb
   label: ./graph/YOLO/yolo-setcards-labels.txt

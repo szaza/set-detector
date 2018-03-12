@@ -10,7 +10,9 @@ import org.tensorflow.Tensor;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 /**
@@ -108,28 +110,30 @@ public class YOLOClassifier {
     }
 
     private List<Recognition> getRecognition(final PriorityQueue<Recognition> priorityQueue) {
-        List<Recognition> recognitions = new ArrayList();
+        Map<String, Recognition> recognitions = new HashMap();
 
         if (priorityQueue.size() > 0) {
             // Best recognition
             Recognition bestRecognition = priorityQueue.poll();
-            recognitions.add(bestRecognition);
+            recognitions.put(bestRecognition.getTitle(), bestRecognition);
 
             for (int i = 0; i < Math.min(priorityQueue.size(), MAX_RESULTS); ++i) {
                 Recognition recognition = priorityQueue.poll();
                 boolean overlaps = false;
-                for (Recognition previousRecognition : recognitions) {
+                for (Recognition previousRecognition : recognitions.values()) {
                     overlaps = overlaps || (getIntersectionProportion(previousRecognition.getLocation(),
                             recognition.getLocation()) > OVERLAP_THRESHOLD);
                 }
 
-                if (!overlaps) {
-                    recognitions.add(recognition);
+                if (!overlaps && (!recognitions.containsKey(recognition.getTitle())
+                       || (recognitions.containsKey(recognition.getTitle())
+                        && recognitions.get(recognition.getTitle()).getConfidence() < recognition.getConfidence()))) {
+                    recognitions.put(recognition.getTitle(), recognition);
                 }
             }
         }
 
-        return recognitions;
+        return new ArrayList(recognitions.values());
     }
 
     private float getIntersectionProportion(BoxPosition primaryShape, BoxPosition secondaryShape) {

@@ -24,14 +24,15 @@ import static edu.ml.tensorflow.config.AnalyzerConfig.SET_SIZE;
 public class GridAnalyzer {
     private final int CATEGORY_NR = 4;
     private final static Logger LOG = LoggerFactory.getLogger(GridAnalyzer.class);
-    private List<Map<String, Set<Card>>> categorizedCards = new ArrayList<>();
+    private List<Map<String, Set<Card>>> categorizedCards;
     /*
      * 0 - number
      * 1 - color
      * 2 - fill
      * 3 - shape
      */
-    public GridAnalyzer() {
+    public void init() {
+        categorizedCards = new ArrayList<>();
         for (int i = 0; i< CATEGORY_NR; i++) {
             categorizedCards.add(new HashMap());
         }
@@ -43,6 +44,7 @@ public class GridAnalyzer {
      * @return list of sets
      */
     public List<SetOfCards> detectSet(final Grid grid) {
+        init();
         if (grid.getGrid().size() > 2) {
             categorizeCards(grid);
             return detectSetByCategory(getLowestMaximum());

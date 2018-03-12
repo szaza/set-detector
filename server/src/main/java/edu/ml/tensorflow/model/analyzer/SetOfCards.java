@@ -21,7 +21,7 @@ public class SetOfCards {
     public SetOfCards clone() {
         SetOfCards clone = new SetOfCards();
         cards.forEach(card -> clone.add(card));
-        return  clone;
+        return clone;
     }
 
     @Override
