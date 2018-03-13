@@ -10,8 +10,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:adjustViewBounds="true"
         android:contentDescription="TODO"
-        android:src="@drawable/ic_launcher" />
+        android:cropToPadding="false"
+        android:src="@drawable/placeholder" />
 
     <TextView
         android:id="@+id/text"

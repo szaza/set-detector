@@ -50,7 +50,7 @@ import static edu.tensorflow.client.Config.LOGGING_TAG;
  * Modified by Zoltan Szabo
  */
 public class CameraConnectionFragment extends Fragment {
-    private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
+    private static final Size DESIRED_PREVIEW_SIZE = new Size(1280, 960);
     /**
      * The camera preview size will be chosen to be the smallest frame by pixel size capable of
      * containing a DESIRED_SIZE x DESIRED_SIZE square.

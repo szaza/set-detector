@@ -5,6 +5,6 @@ package edu.tensorflow.client;
  */
 
 public interface Config {
-    int INPUT_SIZE = 480;   // The input size. A square image of inputSize x inputSize is assumed.
+    int INPUT_SIZE = 960;   // The input size. A square image of inputSize x inputSize is assumed.
     String LOGGING_TAG = "SET";
 }

@@ -8,24 +8,23 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import edu.tensorflow.client.R;
-import edu.tensorflow.client.api.dto.ValidSetDTO;
+import edu.tensorflow.client.model.Result;
 
 /**
  * Created by Zoltan Szabo on 3/12/18.
  */
 
-public class CustomArrayAdapter extends ArrayAdapter<ValidSetDTO> {
-
-    private final Context context;
-    private final ValidSetDTO[] values;
+public class CustomArrayAdapter extends ArrayAdapter<Result> {
+    private final List<Result> values;
     private final LayoutInflater inflater;
 
-    public CustomArrayAdapter(Context context, int resource, ValidSetDTO[] values) {
-        super(context, resource, values);
-        this.context = context;
+    public CustomArrayAdapter(final Context context, final int resource, final List<Result> values) {
+        super(context, resource, values.toArray(new Result[]{}));
         this.values = values;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -43,15 +42,8 @@ public class CustomArrayAdapter extends ArrayAdapter<ValidSetDTO> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.textView.setText(values[position].getSetOfCards().toString());
-        final String URL = values[position].getImagePath();
-        Glide.with(context)
-                .load(URL)
-                .centerCrop()
-                .placeholder(R.drawable.ic_launcher)
-                .crossFade()
-                .into(holder.imageView);
-
+        holder.textView.setText(values.get(position).getDescription());
+        Picasso.get().load(values.get(position).getURL()).placeholder(R.drawable.placeholder).into(holder.imageView);
         return convertView;
     }
 
