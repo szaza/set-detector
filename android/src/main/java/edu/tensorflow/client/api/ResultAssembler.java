@@ -1,10 +1,14 @@
 package edu.tensorflow.client.api;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.tensorflow.client.R;
 import edu.tensorflow.client.api.dto.ResultDTO;
+import edu.tensorflow.client.api.dto.ValidSetDTO;
 import edu.tensorflow.client.model.Result;
 
 /**
@@ -12,16 +16,23 @@ import edu.tensorflow.client.model.Result;
  */
 
 public class ResultAssembler {
-    public List<Result> convertToEntityList(final ResultDTO resultDTO) {
+    public List<Result> convertToEntityList(final Context context, final ResultDTO resultDTO) {
         List<Result> resultList = new ArrayList();
 
         Result result = new Result();
         result.setURL(resultDTO.getPredictedImage());
+        result.setTitle(context.getString(R.string.recognized_cards));
         result.setDescription(resultDTO.getRecognitions().stream().collect(Collectors.joining("\n")));
         resultList.add(result);
 
-        resultDTO.getValidSetList().forEach(validSetDTO
-                -> resultList.add(new Result(validSetDTO.getImagePath(), validSetDTO.getSetOfCards().toString())));
+        List<ValidSetDTO> validSetList = resultDTO.getValidSetList();
+        for (int i=0; i<validSetList.size(); i++) {
+            ValidSetDTO validSetDTO = validSetList.get(i);
+            resultList.add(new Result(validSetDTO.getImagePath(),
+                    context.getString(R.string.set_of_cards) + "#" + (i+1) + ":",
+                    validSetDTO.getSetOfCards().toString()));
+        }
+
         return  resultList;
     }
 }

@@ -3,6 +3,7 @@ package edu.tensorflow.client.api.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SetOfCardsDTO implements Serializable {
     private List<CardDTO> cards;
@@ -26,7 +27,8 @@ public class SetOfCardsDTO implements Serializable {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        cards.forEach(card -> {stringBuilder.append(card.getTitle()); stringBuilder.append(", ");});
+        stringBuilder.append(cards.stream().map(card ->
+                card.getTitle()).collect(Collectors.joining(", ")));
         return stringBuilder.toString();
     }
 }

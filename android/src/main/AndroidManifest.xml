@@ -26,5 +26,4 @@
             android:parentActivityName=".camera.ClassifierActivity">
         </activity>
     </application>
-
 </manifest>

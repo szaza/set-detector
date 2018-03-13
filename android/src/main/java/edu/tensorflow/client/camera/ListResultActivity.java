@@ -21,7 +21,8 @@ public class ListResultActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
         ResultAssembler resultAssembler = new ResultAssembler();
-        List<Result> resultList = resultAssembler.convertToEntityList((ResultDTO) getIntent().getExtras().get("result"));
+        List<Result> resultList = resultAssembler.convertToEntityList(this,
+                (ResultDTO) getIntent().getExtras().get("result"));
         CustomArrayAdapter customArrayAdapter = new CustomArrayAdapter(getApplicationContext(), resultList.size(),
                 resultList);
         setListAdapter(customArrayAdapter);

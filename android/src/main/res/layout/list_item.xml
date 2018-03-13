@@ -6,7 +6,7 @@
     android:padding="6dip">
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/list_item_image"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -16,10 +16,18 @@
         android:src="@drawable/placeholder" />
 
     <TextView
-        android:id="@+id/text"
-        android:layout_width="fill_parent"
+        android:id="@+id/list_item_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/image"
+        android:layout_below="@id/list_item_image"
+        android:text="@string/recognized_cards"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/list_item_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/list_item_title"
         android:text="Example application"
         android:textSize="16sp" />
 

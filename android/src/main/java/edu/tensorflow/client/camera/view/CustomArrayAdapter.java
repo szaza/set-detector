@@ -35,20 +35,23 @@ public class CustomArrayAdapter extends ArrayAdapter<Result> {
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.list_item, parent, false);
-            holder.imageView = convertView.findViewById(R.id.image);
-            holder.textView = convertView.findViewById(R.id.text);
+            holder.listItemImage = convertView.findViewById(R.id.list_item_image);
+            holder.listItemText = convertView.findViewById(R.id.list_item_text);
+            holder.listItemTitle = convertView.findViewById(R.id.list_item_title);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.textView.setText(values.get(position).getDescription());
-        Picasso.get().load(values.get(position).getURL()).placeholder(R.drawable.placeholder).into(holder.imageView);
+        holder.listItemTitle.setText(values.get(position).getTitle());
+        holder.listItemText.setText(values.get(position).getDescription());
+        Picasso.get().load(values.get(position).getURL()).placeholder(R.drawable.placeholder).into(holder.listItemImage);
         return convertView;
     }
 
     public static class ViewHolder {
-        TextView textView;
-        ImageView imageView;
+        TextView listItemTitle;
+        TextView listItemText;
+        ImageView listItemImage;
     }
 }
