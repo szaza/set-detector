@@ -1,5 +1,8 @@
 package edu.tensorflow.client.camera;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -9,6 +12,7 @@ import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -22,7 +26,6 @@ import java.nio.ByteBuffer;
 import edu.tensorflow.client.R;
 import edu.tensorflow.client.api.SETDetectorService;
 import edu.tensorflow.client.api.dto.ResultDTO;
-import edu.tensorflow.client.util.ActionListener;
 import edu.tensorflow.client.util.ImageSaver;
 import edu.tensorflow.client.util.ImageUtils;
 import edu.tensorflow.client.util.PersistImageTask;
@@ -48,6 +51,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private SETDetectorService setDetectorService;
     private File file;
     private boolean compute;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,31 +66,15 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
 
         file = new File(this.getExternalFilesDir(null), "pic.jpg");
         findViewById(R.id.send).setOnClickListener((View v) -> {
-            if (croppedBitmap != null) {
-                compute = true;
-                PersistImageTask persistImageTask = new PersistImageTask();
-                persistImageTask.setBitmap(croppedBitmap);
-                persistImageTask.setFile(file);
-                persistImageTask.setActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed() {
-                        setDetectorService.detect(file).enqueue(new Callback<ResultDTO>() {
-                            @Override
-                            public void onResponse(Call<ResultDTO> call, Response<ResultDTO> response) {
-                                startListActivity(response.body());
-                                compute = false;
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResultDTO> call, Throwable t) {
-                                Log.e(LOGGING_TAG, "Error: " + t.getMessage());
-                                compute = false;
-                            }
-                        });
-
-                    }
-                });
-                backgroundHandler.post(new ImageSaver(persistImageTask));
+            if (!isNetworkConnected()) {
+                createAlertDialog(getString(R.string.no_connection_title),
+                        getString(R.string.no_connection_message));
+            } else {
+                if (croppedBitmap != null) {
+                    compute = true;
+                    backgroundHandler.post(new ImageSaver(createPersistImageTask()));
+                    createProgressDialog();
+                }
             }
         });
     }
@@ -130,7 +118,8 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             }
 
             if (!compute) {
-                rgbFrameBitmap.setPixels(convertYUVToARGB(image), 0, previewWidth, 0, 0, previewWidth, previewHeight);
+                rgbFrameBitmap.setPixels(convertYUVToARGB(image), 0, previewWidth, 0, 0,
+                        previewWidth, previewHeight);
                 new Canvas(croppedBitmap).drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
             }
             image.close();
@@ -196,5 +185,56 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         Intent intent = new Intent(this, ListResultActivity.class);
         intent.putExtra("result", resultDTO);
         startActivity(intent);
+    }
+
+    private PersistImageTask createPersistImageTask() {
+        PersistImageTask persistImageTask = new PersistImageTask();
+        persistImageTask.setBitmap(croppedBitmap);
+        persistImageTask.setFile(file);
+        persistImageTask.setActionListener(() ->
+            setDetectorService.detect(file).enqueue(new Callback<ResultDTO>() {
+                @Override
+                public void onResponse(Call<ResultDTO> call, Response<ResultDTO> response) {
+                    startListActivity(response.body());
+                    compute = false;
+                    progressDialog.hide();
+
+                }
+
+                @Override
+                public void onFailure(Call<ResultDTO> call, Throwable t) {
+                    Log.e(LOGGING_TAG, "Error: " + t.getMessage());
+                    compute = false;
+                    progressDialog.hide();
+                    createAlertDialog(getString(R.string.processing_error_title),
+                            getString(R.string.processing_error_message));
+                }
+            }));
+
+        return persistImageTask;
+    }
+
+    private void createProgressDialog() {
+        compute = true;
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setTitle(getString(R.string.progress_title));
+        progressDialog.setMessage(getString(R.string.progress_message));
+        progressDialog.show();
+    }
+
+    private void createAlertDialog(final String title, final String message) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, getString(R.string.ok),
+               (dialog, which) -> dialog.dismiss());
+        alertDialog.show();
+    }
+
+    private boolean isNetworkConnected() {
+        return ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE))
+                .getActiveNetworkInfo() != null;
     }
 }

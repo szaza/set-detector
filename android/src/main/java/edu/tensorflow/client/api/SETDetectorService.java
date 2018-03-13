@@ -2,6 +2,7 @@ package edu.tensorflow.client.api;
 
 import java.io.File;
 
+import edu.tensorflow.client.Config;
 import edu.tensorflow.client.api.dto.ResultDTO;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -15,15 +16,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class SETDetectorService {
-    private final static String SERVER_PATH = "http://192.168.48.106:8080";
     private final SetCardDetectorService setCardDetectorService;
 
     public SETDetectorService() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(SERVER_PATH)
+                .baseUrl(Config.host)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
         setCardDetectorService = retrofit.create(SetCardDetectorService.class);
     }
 
