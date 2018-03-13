@@ -8,7 +8,6 @@ import java.util.List;
 import edu.tensorflow.client.R;
 import edu.tensorflow.client.api.ResultAssembler;
 import edu.tensorflow.client.api.dto.ResultDTO;
-import edu.tensorflow.client.api.dto.ValidSetDTO;
 import edu.tensorflow.client.camera.view.CustomArrayAdapter;
 import edu.tensorflow.client.model.Result;
 

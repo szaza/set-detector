@@ -184,6 +184,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private void startListActivity(final ResultDTO resultDTO) {
         Intent intent = new Intent(this, ListResultActivity.class);
         intent.putExtra("result", resultDTO);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -195,17 +196,16 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             setDetectorService.detect(file).enqueue(new Callback<ResultDTO>() {
                 @Override
                 public void onResponse(Call<ResultDTO> call, Response<ResultDTO> response) {
-                    startListActivity(response.body());
                     compute = false;
-                    progressDialog.hide();
-
+                    closeProgressDialog();
+                    startListActivity(response.body());
                 }
 
                 @Override
                 public void onFailure(Call<ResultDTO> call, Throwable t) {
                     Log.e(LOGGING_TAG, "Error: " + t.getMessage());
                     compute = false;
-                    progressDialog.hide();
+                    closeProgressDialog();
                     createAlertDialog(getString(R.string.processing_error_title),
                             getString(R.string.processing_error_message));
                 }
@@ -236,5 +236,10 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     private boolean isNetworkConnected() {
         return ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE))
                 .getActiveNetworkInfo() != null;
+    }
+
+    private void closeProgressDialog() {
+        progressDialog.hide();
+        progressDialog.dismiss();
     }
 }

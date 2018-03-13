@@ -41,9 +41,6 @@ public abstract class CameraActivity extends Activity implements OnImageAvailabl
 
     @Override
     public synchronized void onPause() {
-        if (!isFinishing()) {
-            finish();
-        }
         super.onPause();
     }
 
