@@ -1,9 +1,10 @@
 package edu.tensorflow.client.api.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultDTO {
+public class ResultDTO implements Serializable {
     private String predictedImage;
     private List<String> recognitions;
     private List<ValidSetDTO> validSetList;

@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.util.Size;
 import android.view.WindowManager;
 import android.widget.Toast;
+
 import edu.tensorflow.client.R;
+import edu.tensorflow.client.camera.view.CameraConnectionFragment;
 
 /**
  * Camera activity class.

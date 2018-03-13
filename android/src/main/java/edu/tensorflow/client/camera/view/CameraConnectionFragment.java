@@ -1,4 +1,4 @@
-package edu.tensorflow.client.camera;
+package edu.tensorflow.client.camera.view;
 
 import android.Manifest;
 import android.app.Activity;
@@ -40,7 +40,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import edu.tensorflow.client.R;
-import edu.tensorflow.client.camera.view.AutoFitTextureView;
 import edu.tensorflow.client.util.CompareSizesByArea;
 import edu.tensorflow.client.util.ErrorDialog;
 

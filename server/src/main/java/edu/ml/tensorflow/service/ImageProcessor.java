@@ -58,7 +58,8 @@ public class ImageProcessor {
         }
 
         graphics.dispose();
-        return saveImage(bufferedImage, applicationProperties.getOutputDir() + "/" + fileName);
+        return applicationProperties.getHost() + ":" + applicationProperties.getPort() +
+                "/" + saveImage(bufferedImage, applicationProperties.getOutputDir() + "/" + fileName);
     }
 
     /**

@@ -1,9 +1,10 @@
 package edu.tensorflow.client.api.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetOfCardsDTO {
+public class SetOfCardsDTO implements Serializable {
     private List<CardDTO> cards;
 
     public SetOfCardsDTO() {

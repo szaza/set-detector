@@ -1,6 +1,8 @@
 package edu.tensorflow.client.api.dto;
 
-public class CardDTO {
+import java.io.Serializable;
+
+public class CardDTO implements Serializable {
     private String title;
 
     public String getTitle() {

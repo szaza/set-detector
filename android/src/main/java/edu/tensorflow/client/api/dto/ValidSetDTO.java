@@ -1,6 +1,8 @@
 package edu.tensorflow.client.api.dto;
 
-public class ValidSetDTO {
+import java.io.Serializable;
+
+public class ValidSetDTO implements Serializable {
     private SetOfCardsDTO setOfCards;
     private String imagePath;
 

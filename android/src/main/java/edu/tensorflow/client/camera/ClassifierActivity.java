@@ -1,5 +1,6 @@
 package edu.tensorflow.client.camera;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -72,7 +73,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                         setDetectorService.detect(file).enqueue(new Callback<ResultDTO>() {
                             @Override
                             public void onResponse(Call<ResultDTO> call, Response<ResultDTO> response) {
-                                Log.i(LOGGING_TAG, "Success: " + response.body().toString());
+                                startListActivity(response.body());
                                 compute = false;
                             }
 
@@ -189,5 +190,11 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             }
             buffer.get(yuvBytes[i]);
         }
+    }
+
+    private void startListActivity(final ResultDTO resultDTO) {
+        Intent intent = new Intent(this, ListResultActivity.class);
+        intent.putExtra("result", resultDTO);
+        startActivity(intent);
     }
 }

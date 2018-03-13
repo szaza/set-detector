@@ -10,4 +10,6 @@ application:
   uploadDir: upload-dir
   imageSize: 416
   imageMean: 255
+  host: http://localhost
+  port: 8080
 
