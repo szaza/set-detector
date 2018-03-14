@@ -16,6 +16,7 @@ import edu.tensorflow.client.R;
 import edu.tensorflow.client.model.Result;
 
 /**
+ * CustomArrayAdapter to present the list of the results.
  * Created by Zoltan Szabo on 3/12/18.
  */
 

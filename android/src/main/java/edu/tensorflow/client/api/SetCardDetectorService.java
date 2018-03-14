@@ -8,6 +8,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 /**
+ * Service interface to communicate with the server.
  * Created by Zoltan Szabo on 3/8/18.
  */
 

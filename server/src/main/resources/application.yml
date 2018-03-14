@@ -10,6 +10,6 @@ application:
   uploadDir: upload-dir
   imageSize: 416
   imageMean: 255
-  host: http://10.42.0.1
+  host: http://192.168.48.106
   port: 8080
 

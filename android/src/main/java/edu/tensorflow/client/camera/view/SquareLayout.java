@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
 /**
+ * Square layout to mark the available image area what will be analyzed.
  * Created by Zoltan Szabo on 3/13/18.
  */
 

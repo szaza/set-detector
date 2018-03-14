@@ -1,6 +1,7 @@
 package edu.tensorflow.client.model;
 
 /**
+ * Result model to store the results returned by the server.
  * Created by Zoltan Szabo on 3/13/18.
  */
 

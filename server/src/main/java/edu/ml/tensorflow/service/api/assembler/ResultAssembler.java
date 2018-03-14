@@ -37,7 +37,6 @@ public class ResultAssembler {
         resultDTO.setPredictedImage(imageProcessor.labelImage(bufferedImage, recognitionList, IOUtil.getFileName(UUID.randomUUID().toString() + ".jpg")));
         recognitionList.forEach(recognition -> resultDTO.addRecognition(recognition.getTitle() + " " + recognition.getConfidence()));
         validSets.forEach(validSet -> resultDTO.addValidSetDTO(validSetAssembler.convertToDTO(validSet, imageProcessor.labelCards(bufferedImage, validSet))));
-
         return  resultDTO;
     }
 

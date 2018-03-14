@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import java.io.File;
 
 /**
+ * Image persisting task. It is necessary because we cannot do it on the main thread so,
+ * we have to use a background thread.
  * Created by Zoltan Szabo on 3/12/18.
  */
 

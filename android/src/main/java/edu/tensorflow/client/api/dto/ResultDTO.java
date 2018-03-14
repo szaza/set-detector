@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Transfer Objects for the returned result.
+ * Created by Zoltan Szabo on 3/8/18.
+ */
+
 public class ResultDTO implements Serializable {
     private String predictedImage;
     private List<String> recognitions;

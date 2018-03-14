@@ -12,6 +12,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
+ * Service class which communicates with the server.
  * Created by Zoltan Szabo on 3/8/18.
  */
 

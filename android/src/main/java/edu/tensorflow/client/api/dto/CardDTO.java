@@ -2,6 +2,11 @@ package edu.tensorflow.client.api.dto;
 
 import java.io.Serializable;
 
+/**
+ * Data Transfer Objects for card.
+ * Created by Zoltan Szabo on 3/8/18.
+ */
+
 public class CardDTO implements Serializable {
     private String title;
 

@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Data Transfer Object for a set of cards.
+ * Created by Zoltan Szabo on 3/8/18.
+ */
+
 public class SetOfCardsDTO implements Serializable {
     private List<CardDTO> cards;
 

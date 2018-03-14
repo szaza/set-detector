@@ -1,6 +1,7 @@
 package edu.tensorflow.client.util;
 
 /**
+ * Class to save image in JPEG format.
  * Created by Zoltan Szabo on 3/8/18.
  */
 

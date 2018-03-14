@@ -12,6 +12,7 @@ import edu.tensorflow.client.camera.view.CustomArrayAdapter;
 import edu.tensorflow.client.model.Result;
 
 /**
+ * ListActivity to present the results.
  * Created by Zoltan Szabo on 3/12/18.
  */
 

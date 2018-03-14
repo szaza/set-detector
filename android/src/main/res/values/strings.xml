@@ -17,6 +17,7 @@
     <string name="no_connection_message">Please verify your internet connection!</string>
 
     <string name="recognized_cards">Recognized cards:</string>
+    <string name="no_card_recognized">There is no card recognized!</string>
     <string name="set_of_cards">SET </string>
 
     <string name="ok">OK</string>

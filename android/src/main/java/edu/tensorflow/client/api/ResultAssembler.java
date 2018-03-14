@@ -12,6 +12,7 @@ import edu.tensorflow.client.api.dto.ValidSetDTO;
 import edu.tensorflow.client.model.Result;
 
 /**
+ * Assembler class to convert DTO to entity.
  * Created by Zoltan Szabo on 3/13/18.
  */
 
@@ -21,8 +22,14 @@ public class ResultAssembler {
 
         Result result = new Result();
         result.setURL(resultDTO.getPredictedImage());
-        result.setTitle(context.getString(R.string.recognized_cards));
-        result.setDescription(resultDTO.getRecognitions().stream().collect(Collectors.joining("\n")));
+
+        if (resultDTO.getRecognitions().size() > 0) {
+            result.setTitle(context.getString(R.string.recognized_cards));
+            result.setDescription(resultDTO.getRecognitions().stream().collect(Collectors.joining("\n")));
+        } else {
+            result.setTitle(context.getString(R.string.no_card_recognized));
+        }
+
         resultList.add(result);
 
         List<ValidSetDTO> validSetList = resultDTO.getValidSetList();

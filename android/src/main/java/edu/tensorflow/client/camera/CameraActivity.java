@@ -17,6 +17,7 @@ import edu.tensorflow.client.camera.view.CameraConnectionFragment;
  * Camera activity class.
  * Modified by Zoltan Szabo
  */
+
 public abstract class CameraActivity extends Activity implements OnImageAvailableListener {
     private static final int PERMISSIONS_REQUEST = 1;
 

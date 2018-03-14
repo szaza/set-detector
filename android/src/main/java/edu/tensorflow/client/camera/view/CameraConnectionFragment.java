@@ -49,6 +49,7 @@ import static edu.tensorflow.client.Config.LOGGING_TAG;
  * Camera connection fragment
  * Modified by Zoltan Szabo
  */
+
 public class CameraConnectionFragment extends Fragment {
     private static final Size DESIRED_PREVIEW_SIZE = new Size(1280, 960);
     /**

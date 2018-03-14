@@ -9,7 +9,6 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.media.Image;
-import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.net.ConnectivityManager;
@@ -21,7 +20,6 @@ import android.util.Size;
 import android.view.View;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 
 import edu.tensorflow.client.R;
 import edu.tensorflow.client.api.SETDetectorService;
@@ -38,20 +36,22 @@ import static edu.tensorflow.client.Config.LOGGING_TAG;
 
 /**
  * Classifier activity class
- * Modified by Zoltan Szabo
+ * Written by Zoltan Szabo
  */
+
 public class ClassifierActivity extends CameraActivity implements OnImageAvailableListener {
     private int previewWidth = 0;
     private int previewHeight = 0;
-    private Bitmap rgbFrameBitmap = null;
     private Bitmap croppedBitmap = null;
     private Matrix frameToCropTransform;
     private HandlerThread backgroundThread;
     private Handler backgroundHandler;
+
     private SETDetectorService setDetectorService;
-    private File file;
-    private boolean compute;
     private ProgressDialog progressDialog;
+
+    private boolean computing = false;
+    private final Object lock = new Object();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +63,8 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     public synchronized void onResume() {
         super.onResume();
         startBackgroundThread();
-
-        file = new File(this.getExternalFilesDir(null), "pic.jpg");
         findViewById(R.id.send).setOnClickListener((View v) -> {
-            if (!isNetworkConnected()) {
-                createAlertDialog(getString(R.string.no_connection_title),
-                        getString(R.string.no_connection_message));
-            } else {
-                if (croppedBitmap != null) {
-                    compute = true;
-                    backgroundHandler.post(new ImageSaver(createPersistImageTask()));
-                    createProgressDialog();
-                }
-            }
+            startRecognizeImage();
         });
     }
 
@@ -90,38 +79,22 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         previewWidth = size.getWidth();
         previewHeight = size.getHeight();
 
-        final int screenOrientation = getWindowManager().getDefaultDisplay().getRotation();
-
-        Log.i(LOGGING_TAG, String.format("Sensor orientation: %d, Screen orientation: %d",
-                rotation, screenOrientation));
-
-        Log.i(LOGGING_TAG, String.format("Initializing at size %dx%d", previewWidth, previewHeight));
-        rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
         croppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Config.ARGB_8888);
-
         frameToCropTransform = ImageUtils.getTransformationMatrix(previewWidth, previewHeight,
-                INPUT_SIZE, INPUT_SIZE, rotation + screenOrientation, true);
-
-        Matrix cropToFrameTransform = new Matrix();
-        frameToCropTransform.invert(cropToFrameTransform);
+                INPUT_SIZE, INPUT_SIZE, rotation
+                + getWindowManager().getDefaultDisplay().getRotation(), true);
+        frameToCropTransform.invert(new Matrix());
     }
 
     @Override
     public void onImageAvailable(final ImageReader reader) {
         Image image = null;
-
         try {
             image = reader.acquireLatestImage();
-
             if (image == null) {
                 return;
             }
-
-            if (!compute) {
-                rgbFrameBitmap.setPixels(convertYUVToARGB(image), 0, previewWidth, 0, 0,
-                        previewWidth, previewHeight);
-                new Canvas(croppedBitmap).drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
-            }
+            fillCroppedBitmap(image);
             image.close();
         } catch (final Exception ex) {
             if (image != null) {
@@ -131,9 +104,29 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    private void fillCroppedBitmap(final Image image) {
+        if (!computing) {
+            synchronized (lock) {
+                Bitmap rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
+                rgbFrameBitmap.setPixels(ImageUtils.convertYUVToARGB(image, previewWidth, previewHeight),
+                        0, previewWidth, 0, 0, previewWidth, previewHeight);
+                new Canvas(croppedBitmap).drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
+            }
+        }
+    }
+
+    private void startRecognizeImage() {
+        File file = new File(this.getExternalFilesDir(null), "imageToRecognize.jpg");
+        if (!isNetworkConnected()) {
+            createAlertDialog(getString(R.string.no_connection_title),
+                    getString(R.string.no_connection_message));
+        } else {
+            synchronized (lock) {
+                computing = true;
+                backgroundHandler.post(new ImageSaver(createPersistImageTask(file)));
+                createProgressDialog();
+            }
+        }
     }
 
     /**
@@ -154,30 +147,8 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             backgroundThread.join();
             backgroundThread = null;
             backgroundHandler = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private int[] convertYUVToARGB(final Image image) {
-        byte[][] yuvBytes = new byte[3][];
-        final Plane[] planes = image.getPlanes();
-        fillBytes(planes, yuvBytes);
-
-        final int yRowStride = planes[0].getRowStride();
-        final int uvRowStride = planes[1].getRowStride();
-        final int uvPixelStride = planes[1].getPixelStride();
-        return ImageUtils.convertYUV420ToARGB8888(yuvBytes[0], yuvBytes[1], yuvBytes[2], previewWidth,
-                previewHeight, yRowStride, uvRowStride, uvPixelStride);
-    }
-
-    private void fillBytes(final Plane[] planes, final byte[][] yuvBytes) {
-        for (int i = 0; i < planes.length; ++i) {
-            final ByteBuffer buffer = planes[i].getBuffer();
-            if (yuvBytes[i] == null) {
-                yuvBytes[i] = new byte[buffer.capacity()];
-            }
-            buffer.get(yuvBytes[i]);
+        } catch (InterruptedException ex) {
+            Log.e(LOGGING_TAG, ex.getMessage());
         }
     }
 
@@ -188,7 +159,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
         startActivity(intent);
     }
 
-    private PersistImageTask createPersistImageTask() {
+    private PersistImageTask createPersistImageTask(final File file) {
         PersistImageTask persistImageTask = new PersistImageTask();
         persistImageTask.setBitmap(croppedBitmap);
         persistImageTask.setFile(file);
@@ -196,7 +167,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
             setDetectorService.detect(file).enqueue(new Callback<ResultDTO>() {
                 @Override
                 public void onResponse(Call<ResultDTO> call, Response<ResultDTO> response) {
-                    compute = false;
                     closeProgressDialog();
                     startListActivity(response.body());
                 }
@@ -204,7 +174,6 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
                 @Override
                 public void onFailure(Call<ResultDTO> call, Throwable t) {
                     Log.e(LOGGING_TAG, "Error: " + t.getMessage());
-                    compute = false;
                     closeProgressDialog();
                     createAlertDialog(getString(R.string.processing_error_title),
                             getString(R.string.processing_error_message));
@@ -215,7 +184,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     }
 
     private void createProgressDialog() {
-        compute = true;
+        computing = true;
         progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -239,6 +208,7 @@ public class ClassifierActivity extends CameraActivity implements OnImageAvailab
     }
 
     private void closeProgressDialog() {
+        computing = false;
         progressDialog.hide();
         progressDialog.dismiss();
     }
