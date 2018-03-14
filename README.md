@@ -20,7 +20,7 @@ A set consist of three cards satisfying all of the following conditions:
 
 For example these three cards form a set:
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Set-game-cards.png" 
+<img src="https://github.com/szaza/set-detector/blob/master/samples/set-game-cards.png" 
 title="sample set cards" alt="sample set cards" width="400"/>
 
 ## The SET detector application
@@ -46,9 +46,27 @@ alt="SET2 detected" title="SET2 detected" width="260"/>
 
 ### Compile and run the application
 #### 1) Compile and run the server side
-Before compiling the server side project, you have to change the configuration parameters.
+Before compiling the server project, you have to do the following steps:
+* Step #1: Change the configuration parameters in the `src/main/resources/application.yml` [configuration file](https://github.com/szaza/set-detector/blob/master/server/src/main/resources/application.yml);
+Change the **host** and **port** settings acccording to your server settings. If you run the server on localhost you can run the `ifconfig` command on linux or `ipconfig` command on windows in order to obtain your ip address.
+* Step #2: Download the frozen graphs from my Google Drive [here](https://drive.google.com/open?id=1yJXjBWfMGGfw_viOzHgRU6088aRJNov_). Create the `graph/YOLO` directory under the `/server/` root and rename the *yolo-voc_19500.pb* file to *yolo-setcards.pb*.
+* Step #3: From the `/server/` root directory open a terminal window and type the following command:<br/>
+`./gradlew clean build -xtest`<br/>
+`./gradlew bootRun`<br/>
+Now, you can open the http://localhost:8080 and you should be able to upload and recognize cards.
+It should looks like this one:
 
-#### 2) Compile and run the cliens side
-First you have to modify the configuration file: [Config.java](https://github.com/szaza/set-detector/blob/master/android/src/main/java/edu/tensorflow/client/Config.java)
-Change the host to point to your server. It can be either a domain or an ip address. If you run the server on localhost you can run
-the `ifconfig` command on linux or `ipconfig` command on windows in order to obtain your ip address.
+<img src="https://github.com/szaza/set-detector/blob/master/samples/set-detector-web.png"
+alt="SET detector web application" title="SET detector web application" width="500"/>
+
+#### 2) Compile and run the cliens side application
+* Step #1: modify the configuration file: [Config.java](https://github.com/szaza/set-detector/blob/master/android/src/main/java/edu/tensorflow/client/Config.java)
+Change the **host** and **port** to point to your server. It can be either a domain or an ip address. If you run the server on localhost you can run the `ifconfig` command on linux or `ipconfig` command on windows in order to obtain your ip address.
+* Step #2: open the project in Android Studio, connect your device to your computer and run the application.
+You also can build the mobile project with Gradle.
+
+## Bibliograpy
+I reused some parts of my previous project to create this one:
+* [Android Real time object detection application](https://github.com/szaza/android-yolo-v2)
+* [Tensorflow Java Example app with YOLOv2 model](https://github.com/szaza/android-yolo-v2)
+* [Tensorflow Java Tutorial with Spring](https://github.com/szaza/tensorflow-java-examples-spring)
