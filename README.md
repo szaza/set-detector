@@ -68,5 +68,5 @@ You also can build the mobile project with Gradle.
 ## Bibliograpy
 I reused some parts of my previous project to create this one:
 * [Android Real time object detection application](https://github.com/szaza/android-yolo-v2)
-* [Tensorflow Java Example app with YOLOv2 model](https://github.com/szaza/android-yolo-v2)
+* [Tensorflow Java Example app with YOLOv2 model](https://github.com/szaza/tensorflow-java-yolo)
 * [Tensorflow Java Tutorial with Spring](https://github.com/szaza/tensorflow-java-examples-spring)
