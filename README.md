@@ -65,7 +65,7 @@ Change the **host** and **port** to point to your server. It can be either a dom
 * Step #2: open the project in Android Studio, connect your device to your computer and run the application.
 You also can build the mobile project with Gradle.
 
-## Bibliograpy
+## Previous work
 I reused some parts of my previous project to create this one:
 * [Android Real time object detection application](https://github.com/szaza/android-yolo-v2)
 * [Tensorflow Java Example app with YOLOv2 model](https://github.com/szaza/tensorflow-java-yolo)
