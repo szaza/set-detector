@@ -13,9 +13,9 @@ Set is a real-time card game published by the Set Enterprises in 1991. The deck 
 * color (red, green and purple);
 
 A set consist of three cards satisfying all of the following conditions:
-* They all have the same number or have three different numbers;
+* They all have the same number of symbols or have three different number of symbols;
 * They all have the same symbol or have three different symbols;
-* They all have the same shading or have three different shadnings;
+* They all have the same shading or have three different shadings;
 * They all have the same color or have three different colors;
 
 For example these three cards form a set:
@@ -25,7 +25,7 @@ title="sample set cards" alt="sample set cards" width="400"/>
 
 ## The SET detector application
 This application is composed up by two main part:
-* server part - recognize the image and check if a SET is present on the cards
+* server part - recognizes the image and check if a SET is present on the cards
 * client part - uploads a picture and presents the results
 
 Let's see how the android application works:
@@ -35,7 +35,7 @@ Let's see how the android application works:
 <img src="https://github.com/szaza/set-detector/blob/master/samples/set-detector-android-take-picture.png"
 alt="SET detector take a picture" title="SET detector take a picture" width="300" />
 
-2) The server process your image and sends back the response what will be presented by the client application;
+2) The server processes your image and sends back the response what will be presented by the client application;
 
 <img src="https://github.com/szaza/set-detector/blob/master/samples/android-recognized-cards-1.png"
 alt="recognized SET cards" title="recognized SET cards" width="260"/>
@@ -54,16 +54,16 @@ Change the **host** and **port** settings acccording to your server settings. If
 `./gradlew clean build -xtest`<br/>
 `./gradlew bootRun`<br/>
 Now, you can open the http://localhost:8080 and you should be able to upload and recognize cards.
-It should looks like this one:
+It should look like this one:
 
 <img src="https://github.com/szaza/set-detector/blob/master/samples/set-detector-web.png"
 alt="SET detector web application" title="SET detector web application" width="500"/>
 
-#### 2) Compile and run the cliens side application
+#### 2) Compile and run the client side application
 * Step #1: modify the configuration file: [Config.java](https://github.com/szaza/set-detector/blob/master/android/src/main/java/edu/tensorflow/client/Config.java)
 Change the **host** and **port** to point to your server. It can be either a domain or an ip address. If you run the server on localhost you can run the `ifconfig` command on linux or `ipconfig` command on windows in order to obtain your ip address.
 * Step #2: open the project in Android Studio, connect your device to your computer and run the application.
-You also can build the mobile project with Gradle.
+You can also build the mobile project with Gradle.
 
 ## Previous work
 I reused some parts of my previous project to create this one:
